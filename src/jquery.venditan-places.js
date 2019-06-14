@@ -1,0 +1,154 @@
+/**
+ * Venditan Places Plugin
+ *
+ * @author Michael Simcoe <michael@venditan.com>
+ * @copyright Venditan &copy; 2019
+ *
+ * @param {jQuery} $
+ */
+(function($) {
+    /**
+     * Venditan Places function
+     *
+     * @param options
+     * @returns {*}
+     */
+    var methods = {
+        init : function(options) {
+            var plugin = this,
+                settings = $.extend({
+                    autocomplete: {},
+                    callback: function() {},
+                    excludeTerms: [],
+                    fields: [ 'place_id', 'name', 'address_component', 'types', 'geometry' ],
+                    logLookup: true,
+                    logURL: '/json_account_address_lookup',
+                    postLog: function() {},
+                    logPostVariable: 'postcode',
+                    restrictions: {},
+                    types: []
+                }, options);
+
+            // Initialises the autocomplete api
+            settings.autocomplete = new google.maps.places.Autocomplete(plugin[0], { types: settings.types });
+
+            // Sets the fields for the API to return with the Places Detail request
+            settings.autocomplete.setFields(settings.fields);
+
+            // Sets the restrictions for the API results, for example, limit to a country
+            settings.autocomplete.setComponentRestrictions(settings.restrictions);
+
+            // Sets the listener for when a place is selected from the results by the user
+            settings.autocomplete.addListener('place_changed', function () { methods.process(plugin); });
+
+            plugin.data('settings', settings);
+
+            // On focus this will attempt to get the users location, it means the results are local to the user
+            plugin.on('focus', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var geolocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            },
+                            circle = new google.maps.Circle({center: geolocation, radius: position.coords.accuracy});
+
+                        plugin.data('settings').autocomplete.setBounds(circle.getBounds());
+                    });
+                }
+            });
+        },
+        process : function(plugin) {
+            var settings = plugin.data('settings'),
+                obj_place = settings.autocomplete.getPlace();
+
+            if ("undefined" !== typeof obj_place) {
+                // We check the postcode to see if we have a partial or a full one
+                var obj_post_code = obj_place.address_components[obj_place.address_components.length - 1];
+                if (obj_place.types.includes("postal_code")) {
+                    obj_post_code = obj_place.address_components[0];
+                    obj_place.address_components.push(obj_place.address_components.shift());
+                }
+
+
+                // If we have a partial postcode then we need to use the lat/long to obtain the full postcode
+                if (obj_post_code.long_name.length < 6) {
+                    $.when(
+                        $.ajax('//api.postcodes.io/postcodes', {
+                            type: 'get',
+                            data: {
+                                'lon': obj_place.geometry.location.lng(),
+                                'lat': obj_place.geometry.location.lat(),
+                                'limit': 1
+                            }
+                        })
+                    ).done(function(data) {
+                        if (data.status === 200) {
+                            // Updates the partial postcode in the results to the full postcode
+                            obj_place.address_components[obj_place.address_components.length - 1] = { long_name: data.result[0].postcode, short_name: data.result[0].postcode };
+                            if (typeof settings.callback === 'function') {
+                                methods.do_callback(plugin, obj_place);
+                            }
+                        }
+                    });
+                } else {
+                    if (typeof settings.callback === 'function') {
+                        methods.do_callback(plugin, obj_place);
+                    }
+                }
+            }
+        },
+        do_callback : function(plugin, place) {
+            // Ensures the place is set and the address is cleansed of excluded terms, then calls the callback function
+            plugin.data('settings').place = place;
+            methods.cleanse(plugin);
+            if (plugin.data('settings').logLookup) {
+                methods.do_log(plugin, place);
+            }
+            return plugin.data('settings').callback.call(this);
+        },
+        do_log : function(plugin, place) {
+            var obj_data = {};
+            obj_data[plugin.data('settings').logPostVariable] =  place.address_components[place.address_components.length - 1].short_name;
+
+            // Initiate log request to VC to report successful lookup
+            $.ajax({
+                type: 'POST',
+                url: plugin.data('settings').logURL,
+                data: obj_data,
+                async: true
+            }).done(plugin.data('settings').postLog);
+        },
+        cleanse : function(plugin) {
+            var settings = plugin.data('settings'),
+                obj_address = settings.place.address_components,
+                arr_exclude_terms = settings.excludeTerms;
+
+            for (var x in obj_address) {
+                if (arr_exclude_terms.includes(obj_address[x].long_name) || arr_exclude_terms.includes(obj_address[x].short_name) || "" === obj_address[x].long_name) {
+                    obj_address.splice(x, 1);
+                    methods.cleanse(plugin);
+                }
+            }
+
+            return obj_address;
+        },
+        get : function(key) {
+            return this.data('settings')[key];
+        },
+        set : function(key, value) {
+            var settings = this.data('settings');
+            settings[key] = value;
+        }
+    };
+
+    $.fn.places = function(method) {
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || ! method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' +  method + ' does not exist on jQuery.places');
+        }
+    };
+}(jQuery));
