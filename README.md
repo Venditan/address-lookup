@@ -23,7 +23,7 @@ Note: it is important to ensure the element it is called against is an input ele
 The snippet above is enough to get the address lookup working, but you will want to view ``jquery.venditan-places.js`` as it provides optional settings that we do override:
 
 ```javascript
-$('#facets').facets({
+$('#autocomplete').places({
     callback: function() {},
     excludeTerms: [],
     fields: [],
