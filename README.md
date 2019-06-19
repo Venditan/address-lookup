@@ -15,7 +15,7 @@ This package has the following features:
 Venditan Address Lookup jQuery plugin was written so it will do a lot of the heavy lifting for you.
 
 ```javascript
-$('#autocomplete').places();
+$('#autocomplete').addressLookup();
 ```
 
 Note: it is important to ensure the element it is called against is an input element or Google Places API will throw an error in your console.
@@ -23,7 +23,7 @@ Note: it is important to ensure the element it is called against is an input ele
 The snippet above is enough to get the address lookup working, but you will want to view ``jquery.address-lookup.js`` as it provides optional settings that we do override:
 
 ```javascript
-$('#autocomplete').places({
+$('#autocomplete').addressLookup({
     callback: function() {},
     excludeTerms: [],
     fields: [],
@@ -58,7 +58,7 @@ Within your callback function you will want to access the Place Detail object so
 To do this you need to simply do the following:
 
 ```javascript
-var obj_place = $('#autocomplete').places('get', 'place');
+var obj_place = $('#autocomplete').addressLookup('get', 'place');
 ```
 
 This will allow you to access the fields you requested in the following manner:

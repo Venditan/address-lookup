@@ -1,5 +1,5 @@
 /**
- * Venditan Places Plugin
+ * Venditan Address Lookup Plugin
  *
  * @author Michael Simcoe <michael@venditan.com>
  * @copyright Venditan &copy; 2019
@@ -8,7 +8,7 @@
  */
 (function($) {
     /**
-     * Venditan Places function
+     * Venditan Address Lookup function
      *
      * @param options
      * @returns {*}
@@ -22,7 +22,7 @@
                     excludeTerms: [],
                     fields: [ 'place_id', 'name', 'address_component', 'types', 'geometry' ],
                     logLookup: true,
-                    logURL: '/json_account_address_lookup',
+                    logURL: '/log_address_lookup',
                     postLog: function() {},
                     logPostVariable: 'postcode',
                     restrictions: {},
@@ -142,13 +142,13 @@
         }
     };
 
-    $.fn.places = function(method) {
+    $.fn.addressLookup = function(method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof method === 'object' || ! method) {
             return methods.init.apply(this, arguments);
         } else {
-            $.error('Method ' +  method + ' does not exist on jQuery.places');
+            $.error('Method ' +  method + ' does not exist on jQuery.addressLookup');
         }
     };
 }(jQuery));
