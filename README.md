@@ -28,7 +28,7 @@ $('#autocomplete').addressLookup({
     excludeTerms: [],
     fields: [],
     logLookup: true,
-    logURL: '/json_account_address_lookup',
+    logURL: '/log_address_lookup',
     postLog: function() {},
     logPostVariable: 'postcode',
     restrictions: {},
