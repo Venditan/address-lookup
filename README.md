@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/%40venditan%2Faddress-lookup.svg)](https://badge.fury.io/js/%40venditan%2Faddress-lookup)
+
 # Venditan Address Lookup
 
 Google Places API solution for handling address/postcode lookup
