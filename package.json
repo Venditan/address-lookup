@@ -1,18 +1,28 @@
 {
-    "name": "venditan-places",
+    "name": "address-lookup",
     "version": "1.0.0",
-    "description": "Site",
-    "main": "Gruntfile.js",
-    "dependencies": {
-        "grunt": "^1.x",
-        "npm": "^6.2.0"
-    },
+    "main": "dist/jquery.address-lookup.min.js",
+    "module": "src/jquery.address-lookup.js",
+    "author": "Michael Simcoe <michael@venditan.com>",
+    "license": "CC-BY-NC-4.0",
+    "description": "Venditan Google Places API solution for handling address/postcode lookup",
+    "keywords": [
+        "google",
+        "places",
+        "api",
+        "postcode",
+        "lookup",
+        "address",
+        "venditan"
+    ],
     "devDependencies": {
+        "npm": "^6.2.0",
+        "grunt": "^1.x",
         "grunt-contrib-uglify": "^0.x",
         "time-grunt": "^1.x"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "grunt default"
     },
     "private": true
 }

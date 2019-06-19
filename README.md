@@ -1,6 +1,6 @@
-# Venditan Places
+# Venditan Address Lookup
 
-Venditan Google Places API solution for handling address/postcode lookup
+Google Places API solution for handling address/postcode lookup
 
 ## Features ##
 
@@ -12,7 +12,7 @@ This package has the following features:
 
 ## How does it work? ##
 
-Venditan Places jQuery plugin was written so it will do a lot of the heavy lifting for you.
+Venditan Address Lookup jQuery plugin was written so it will do a lot of the heavy lifting for you.
 
 ```javascript
 $('#autocomplete').places();
@@ -20,7 +20,7 @@ $('#autocomplete').places();
 
 Note: it is important to ensure the element it is called against is an input element or Google Places API will throw an error in your console.
 
-The snippet above is enough to get the address lookup working, but you will want to view ``jquery.venditan-places.js`` as it provides optional settings that we do override:
+The snippet above is enough to get the address lookup working, but you will want to view ``jquery.address-lookup.js`` as it provides optional settings that we do override:
 
 ```javascript
 $('#autocomplete').places({

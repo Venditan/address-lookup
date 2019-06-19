@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     var config = {};
 
     var obj_js_files = [
-        './src/jquery.venditan-places.js'
+        './src/jquery.address-lookup.js'
     ];
 
     require('time-grunt')(grunt);
@@ -21,7 +21,7 @@ module.exports = function (grunt) {
                 files : [{
                     flatten: false,
                     src: obj_js_files,
-                    dest: './dist/jquery.venditan-places.min.js'
+                    dest: './dist/jquery.address-lookup.min.js'
                 }]
             }
         }
