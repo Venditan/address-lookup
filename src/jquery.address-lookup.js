@@ -20,7 +20,7 @@
                     autocomplete: {},
                     callback: function() {},
                     excludeTerms: [],
-                    fields: [ 'place_id', 'name', 'address_component', 'types', 'geometry' ],
+                    fields: [ 'place_id', 'name', 'address_component', 'types', 'geometry', 'vicinity' ],
                     logLookup: true,
                     logURL: '/log_address_lookup',
                     postLog: function() {},
@@ -64,15 +64,46 @@
 
             if ("undefined" !== typeof obj_place) {
                 // We check the postcode to see if we have a partial or a full one
-                var obj_post_code = obj_place.address_components[obj_place.address_components.length - 1];
-                if (obj_place.types.includes("postal_code")) {
-                    obj_post_code = obj_place.address_components[0];
-                    obj_place.address_components.push(obj_place.address_components.shift());
+                if ("undefined" !== typeof obj_place.address_components) {
+                    var obj_post_code = obj_place.address_components[obj_place.address_components.length - 1];
+                    if (obj_place.types.includes("postal_code")) {
+                        obj_post_code = obj_place.address_components[0];
+                        obj_place.address_components.push(obj_place.address_components.shift());
+                    }
                 }
 
+                // Obtains the vicinity data which is more accurate for establishments
+                var arr_vicinity = [];
+                if ("undefined" !== typeof obj_place.types) {
+                    if (obj_place.types.includes("establishment")) {
+                        arr_vicinity = obj_place.vicinity.split(", ");
+                        var arr_data = [];
+                        if (obj_place.address_components.length > 3) {
+                            // The address is quite featured so we replace the necessary fields
+                            for (var i = 0; i < 4; i++) {
+                                obj_place.address_components[i] = {
+                                    long_name: arr_vicinity[i],
+                                    short_name: arr_vicinity[i]
+                                };
+                            }
+                        } else {
+                            // Very little information in the results so we add more to it instead
+                            for (var i = 0; i < 4; i++) {
+                                arr_data.push({
+                                    long_name: arr_vicinity[i],
+                                    short_name: arr_vicinity[i]
+                                });
+                            }
+                            arr_data.reverse();
+                            for (var x in arr_data) {
+                                obj_place.address_components.unshift(arr_data[x]);
+                            }
+                        }
+                    }
+                }
 
                 // If we have a partial postcode then we need to use the lat/long to obtain the full postcode
-                if (obj_post_code.long_name.length < 6) {
+                if ("undefined" !== typeof obj_post_code && obj_post_code.long_name.length < 6) {
                     $.when(
                         $.ajax('//api.postcodes.io/postcodes', {
                             type: 'get',
@@ -109,15 +140,17 @@
         },
         do_log : function(plugin, place) {
             var obj_data = {};
-            obj_data[plugin.data('settings').logPostVariable] =  place.address_components[place.address_components.length - 1].short_name;
+            if ("undefined" !== typeof place.address_components) {
+                obj_data[plugin.data('settings').logPostVariable] = place.address_components[place.address_components.length - 1].short_name;
 
-            // Initiate log request to VC to report successful lookup
-            $.ajax({
-                type: 'POST',
-                url: plugin.data('settings').logURL,
-                data: obj_data,
-                async: true
-            }).done(plugin.data('settings').postLog);
+                // Initiate log request to VC to report successful lookup
+                $.ajax({
+                    type: 'POST',
+                    url: plugin.data('settings').logURL,
+                    data: obj_data,
+                    async: true
+                }).done(plugin.data('settings').postLog);
+            }
         },
         cleanse : function(plugin) {
             var settings = plugin.data('settings'),
