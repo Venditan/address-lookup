@@ -1,6 +1,6 @@
 {
     "name": "@venditan/address-lookup",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "main": "dist/jquery.address-lookup.min.js",
     "module": "src/jquery.address-lookup.js",
     "author": "Michael Simcoe <michael@venditan.com>",

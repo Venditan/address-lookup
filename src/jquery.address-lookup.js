@@ -104,16 +104,16 @@
 
                 // If we have a partial postcode then we need to use the lat/long to obtain the full postcode
                 if ("undefined" !== typeof obj_post_code && obj_post_code.long_name.length < 6) {
-                    $.when(
-                        $.ajax('//api.postcodes.io/postcodes', {
-                            type: 'get',
-                            data: {
-                                'lon': obj_place.geometry.location.lng(),
-                                'lat': obj_place.geometry.location.lat(),
-                                'limit': 1
-                            }
-                        })
-                    ).done(function(data) {
+                    $.ajax({
+                        url: '//api.postcodes.io/postcodes',
+                        method: 'get',
+                        dataType: 'json',
+                        data:{
+                            'lon': obj_place.geometry.location.lng(),
+                            'lat': obj_place.geometry.location.lat(),
+                            'limit': 1
+                        }
+                    }).done(function(data) {
                         if (data.status === 200) {
                             // Updates the partial postcode in the results to the full postcode
                             obj_place.address_components[obj_place.address_components.length - 1] = { long_name: data.result[0].postcode, short_name: data.result[0].postcode };
