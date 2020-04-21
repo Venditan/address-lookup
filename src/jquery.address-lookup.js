@@ -115,8 +115,13 @@
                         }
                     }).done(function(data) {
                         if (data.status === 200) {
-                            // Updates the partial postcode in the results to the full postcode
-                            obj_place.address_components[obj_place.address_components.length - 1] = { long_name: data.result[0].postcode, short_name: data.result[0].postcode };
+                            if (data.result) {
+                                // Updates the partial postcode in the results to the full postcode
+                                obj_place.address_components[obj_place.address_components.length - 1] = {
+                                    long_name: data.result[0].postcode,
+                                    short_name: data.result[0].postcode
+                                };
+                            }
                             if (typeof settings.callback === 'function') {
                                 methods.do_callback(plugin, obj_place);
                             }
