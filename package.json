@@ -17,7 +17,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Venditan/address-lookup/"
+        "url": "https://github.com/Venditan/address-lookup.git"
     },
     "devDependencies": {
         "npm": ">=6.13.4",
