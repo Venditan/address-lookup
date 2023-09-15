@@ -24,6 +24,7 @@
                     logLookup: true,
                     logURL: '/log_address_lookup',
                     postLog: function() {},
+                    logData: {},
                     logPostVariable: 'postcode',
                     restrictions: {},
                     types: []
@@ -144,7 +145,7 @@
             return plugin.data('settings').callback.call(this);
         },
         do_log : function(plugin, place) {
-            var obj_data = {};
+            var obj_data = plugin.data('settings').logData || {};
             if ("undefined" !== typeof place.address_components) {
                 obj_data[plugin.data('settings').logPostVariable] = place.address_components[place.address_components.length - 1].short_name;
 

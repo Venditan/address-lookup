@@ -32,6 +32,7 @@ $('#autocomplete').addressLookup({
     logLookup: true,
     logURL: '/log_address_lookup',
     postLog: function() {},
+    logData: {},
     logPostVariable: 'postcode',
     restrictions: {},
     types: []
@@ -49,7 +50,8 @@ The following settings are also available:
 * `fields` - sets the fields for the API to return with the Places Detail request [API Reference](https://developers.google.com/maps/documentation/javascript/reference/places-widget#Autocomplete.setFields) and [Fields](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult)
 * `logLookup` - set whether to log the lookup with VC or not
 * `logURL` - set the URL to post to so that VC can log the lookup request
-* `logPostVariable` - set the parameter name to use in the post request when logging to VC
+* `logPostVariable` - set the parameter name to use in the post request when logging the usage
+* `logData` - set additional parameters, that you would like to pass to `logURL`
 * `restrictions` - sets the restrictions for the API results, for example, limit to a country [API Reference](https://developers.google.com/maps/documentation/javascript/reference/places-widget#Autocomplete.setComponentRestrictions) and [Restrictions](https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions)
 * `types` - sets the type of data to return, by default it will return residential and businesses [API Reference](https://developers.google.com/maps/documentation/javascript/reference/places-widget#Autocomplete.setTypes) and [Types](https://developers.google.com/places/supported_types#table3)
 
